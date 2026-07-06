@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natisni in Primi - 3D Tiskanje po Naročilu</title>
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 40px 0 20px 0;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 5px;
+        }
+
+        .logo-icon {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #ff4500, #8b5cf6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(255, 69, 0, 0.3);
+            transform: rotate(-5deg);
+            transition: transform 0.3s ease;
+        }
+        
+        .logo-container:hover .logo-icon {
+            transform: rotate(5deg) scale(1.05);
+        }
+        
+        .logo-text {
+            font-size: 28pt;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: #1e293b;
+            margin: 0;
+            text-transform: uppercase;
+        }
+        
+        .logo-text span {
+            color: #ff4500;
+        }
+
+        .slogan {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #64748b;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        
+        .url-suggestion {
+            display: inline-block;
+            background: rgba(255, 69, 0, 0.08);
+            border: 1px dashed #ff4500;
+            color: #e03e00;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11pt;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 55px 20px;
+            background: linear-gradient(135deg, #fff5f0 0%, #f5f3ff 100%);
+            border-radius: 20px;
+            margin: 30px 0;
+            border: 1px solid #ffe4d6;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero h1 {
+            font-size: 26pt;
+            color: #1e293b;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+        
+        .hero p {
+            font-size: 12.5pt;
+            color: #475569;
+            max-width: 650px;
+            margin: 0 auto 25px auto;
+        }
+        
+        .badge-shipping {
+            background: linear-gradient(90deg, #ff4500, #8b5cf6);
+            color: white;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 11pt;
+            box-shadow: 0 4px 12px rgba(255, 69, 0, 0.25);
+            margin-bottom: 20px;
+        }
+
+        .live-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-size: 9.5pt;
+            font-weight: 600;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+        
+        .section-title {
+            font-size: 18pt;
+            color: #1e293b;
+            border-left: 5px solid #ff4500;
+            padding-left: 12px;
+            margin-top: 50px;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            border-color: #ff4500;
+            box-shadow: 0 12px 20px -5px rgba(255, 69, 0, 0.15);
+        }
+
+        .product-badge {
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 9pt;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .product-badge.trend {
+            background: #fff7ed;
+            color: #ea580c;
+            border: 1px solid #ffedd5;
+        }
+
+        .product-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 14pt;
+            color: #1e293b;
+        }
+
+        .product-card p {
+            margin: 0;
+            font-size: 10.5pt;
+            color: #64748b;
+        }
+        
+        .about-section {
+            background: white;
+            border-radius: 16px;
+            padding: 35px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .about-section::after {
+            content: "“";
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 80pt;
+            color: #f1f5f9;
+            font-family: serif;
+            line-height: 0;
+        }
+        
+        .about-meta {
+            font-size: 10pt;
+            color: #ff4500;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        
+        .about-name {
+            font-size: 17pt;
+            font-weight: bold;
+            color: #1e293b;
+            margin-bottom: 15px;
+        }
+        
+        .form-container {
+            background: white;
+            border: 2px solid #ff4500;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 15px 30px -10px rgba(255, 69, 0, 0.08);
+        }
+        
+        .form-group {
+            margin-bottom: 22px;
+        }
+        
+        .form-notice {
+            background-color: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            color: #b45309;
+            padding: 14px;
+            font-size: 10.5pt;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #334155;
+            font-size: 10.5pt;
+        }
+        
+        input[type="text"], input[type="email"], input[type="tel"], textarea, select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            color: #1e293b;
+            font-size: 10.5pt;
+            transition: all 0.2s ease;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            border-color: #ff4500;
+            background: white;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.15);
+        }
+        
+        .radio-group {
+            margin-top: 5px;
+        }
+        
+        .radio-option {
+            margin-bottom: 12px;
+            font-size: 10.5pt;
+            color: #475569;
+            display: flex;
+            align-items: center;
+        }
+        
+        .radio-option input {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            accent-color: #ff4500;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(90deg, #ff4500, #d63600);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            font-size: 12pt;
+            font-weight: bold;
+            border-radius: 10px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(255, 69, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 69, 0, 0.3);
+        }
+        
+        .notification-info {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 10pt;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        footer {
+            margin-top: 60px;
+            padding: 40px 0;
+            text-align: center;
+            border-top: 2px solid #e2e8f0;
+            color: #64748b;
+            font-size: 10.5pt;
+        }
+        
+        footer a {
+            color: #ff4500;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+
+        footer a:hover {
+            color: #b33000;
+        }
+        
+        .contact-highlight {
+            color: #1e293b;
+            font-size: 14pt;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <div class="logo-container">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5.5 5.5 0 0 0 12.5 3 5.5 5.5 0 0 0 7 8.5c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"></path>
+                    <path d="M9 18h6"></path>
+                    <path d="M10 22h4"></path>
+                    <line x1="12" y1="7" x2="12" y2="7.01" stroke-width="3"></line>
+                    <line x1="12" y1="10" x2="12" y2="12"></line>
+                </svg>
+                <div class="logo-text">Natisni in <span>Primi</span></div>
+            </div>
+            <div class="slogan">3D modeli naravnost v vaše roke</div>
+            <div class="url-suggestion">Predlagana domena: www.natisniinprimi.si</div>
+        </header>
+
+        <!-- HERO -->
+        <div class="hero">
+            <div class="badge-shipping">🚀 BREZPLAČNA POŠTNINA ZA VSA NAROČILA NAD 30€</div>
+            <h1>Spremenite zamisli v oprijemljivo realnost</h1>
+            <p>Unikatni izdelki po naročilu z vrhunskimi 3D tiskalniki. <strong>Cena vseh projektov je po dogovoru</strong>, odvisno od velikosti in zahtevnosti vašega izbranega modela.</p>
+            <div class="live-status">
+                <span class="pulse-dot"></span> Tiskalniki so trenutno ogreti in v pogonu!
+            </div>
+        </div>
+
+        <!-- POPULARNI IZDELKI (TRENDI) -->
+        <div class="section-title">Trenutni 3D trendi (Cena po dogovoru)</div>
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="product-badge trend">🔥 Najbolj iskano</div>
+                <h3>Mecha Chameleon</h3>
+                <p>Gibljiva, artikulirana figura kameleončka, ki spreminja položaje. Popolna igračka ali odličen okras za pisalno mizo!</p>
+            </div>
+            <div class="product-card">
+                <div class="product-badge">⚓ Klasika</div>
+                <h3>3D Benchy</h3>
+                <p>Kultni model ladjice v poljubnih barvah in velikostih. Brezčasen kos za zbiratelje in ljubitelje 3D tehnologije.</p>
+            </div>
+            <div class="product-card">
+                <div class="product-badge trend">⚡ Hit leta</div>
+                <h3>Artikulirani Zmaj</h3>
+                <p>Legendarni gibljivi zmaji, ki očarajo vsakogar. Izjemno natančen tisk z neverjetno gladkimi sklepi.</p>
+            </div>
+            <div class="product-card">
+                <div class="product-badge">🛠️ Po meri</div>
+                <h3>Vaš unikatni model</h3>
+                <p>Imate specifično idejo ali načrt? Spodaj izpolnite obrazec, bodite natančni in pripravili vam bomo unikatno ponudbo.</p>
+            </div>
+        </div>
+
+        <!-- O NAS -->
+        <div class="section-title">Kdo ustvarja za vas?</div>
+        <div class="about-section">
+            <div class="about-meta">Ustanovitelj & CEO</div>
+            <div class="about-name">Klemen Macarol</div>
+            <p style="margin: 0; color: #475569; font-size: 11pt; position: relative; z-index: 1;">
+                "Verjamem, da si vsaka dobra ideja zasluži postati resničnost. Z našim novim imenom in sloganom <strong>'Natisni in primi'</strong> želimo digitalne modele prinesti naravnost v vaše dlani. Ker je vsak projekt unikat, je <strong>cena vedno stvar dogovora</strong> – tako poskrbimo, da dobite najbolj pošteno ponudbo na trgu."
+            </p>
+        </div>
+
+        <!-- ANKETA / KOŠARICA -->
+        <div class="section-title">Hitra košarica & Povpraševanje</div>
+        <div class="form-container">
+            <form onsubmit="alert('Naročilo uspešno oddano! Klemen bo takoj prejel SMS obvestilo o novem projektu.'); return false;">
+                
+                <div class="form-notice">
+                    ⚠️ <strong>Pomembno opozorilo:</strong> Prosimo, bodite čim bolj specifični in natančni pri vnosu podatkov, saj bo končni izdelek ustvarjen neposredno iz vaših navodil!
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Vaše Ime in Priimek</label>
+                    <input type="text" id="name" placeholder="npr. Janez Novak" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">E-poštni naslov</label>
+                    <input type="email" id="email" placeholder="npr. janez@gmail.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Telefonska številka</label>
+                    <input type="tel" id="phone" placeholder="npr. 041 123 456" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Kateri izdelek naročate?</label>
+                    <div class="radio-group">
+                        <div class="radio-option"><input type="radio" name="izdelek" id="p1" checked> <label for="p1">Mecha Chameleon Figure (Trend ✨)</label></div>
+                        <div class="radio-option"><input type="radio" name="izdelek" id="p2"> <label for="p2">3D Benchy ladjica</label></div>
+                        <div class="radio-option"><input type="radio" name="izdelek" id="p3"> <label for="p3">Artikulirani Zmaj</label></div>
+                        <div class="radio-option"><input type="radio" name="izdelek" id="p4"> <label for="p4">Nekaj drugega / Popolnoma po naročilu</label></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="color-select">Želena barva filamenta (Freestyle izbira 🎨)</label>
+                    <select id="color-select">
+                        <option value="default">Izberi osnovno barvo...</option>
+                        <option value="black">Mat črna (Elegantna)</option>
+                        <option value="white">Svetleča bela</option>
+                        <option value="rainbow">Mavrična (Preliivajoča)</option>
+                        <option value="gold">Kraljeva zlata</option>
+                        <option value="custom">Druga (vpiši spodaj v detajle)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="source">Vir ali povezava do obstoječega izdelka (če obstaja)</label>
+                    <input type="text" id="source" placeholder="npr. povezava do Thingiverse, Printables, slike ali modela...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="details">Natančni podatki in dodatni komentarji za spremembe (Barva, velikost, detajli)</label>
+                    <textarea id="details" rows="4" placeholder="Bodite čim bolj natančni (npr. 'Želim zmaja v rdeče-zlati barvi, dolžine natanko 20cm, z ojačanimi krili...')" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Način dostave</label>
+                    <div class="radio-group">
+                        <div class="radio-option"><input type="radio" name="dostava" id="d1" checked> <label for="d1">Dostava po pošti (BREZPLAČNA nad 30€, sicer 3,90€)</label></div>
+                        <div class="radio-option"><input type="radio" name="dostava" id="d2"> <label for="d2">Osebni prevzem</label></div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-submit">🚀 POŠLJI POVPRAŠEVANJE (Cena po dogovoru)</button>
+
+                <div class="notification-info">
+                    <span>📱</span>
+                    <strong>Instant obvestilo:</strong> Ob kliku na gumb bo sistem avtomatsko poslal SMS obvestilo neposredno na Klemnov telefon za takojšnjo obdelavo vašega naročila po dogovoru!
+                </div>
+            </form>
+        </div>
+
+        <!-- FOOTER -->
+        <footer>
+            <p>Imate vprašanja ali posebne zahteve glede cen? Pišite ali pokličite!</p>
+            <div class="contact-highlight">
+                E-mail: <a href="mailto:klemenmacarol578@gmail.com">klemenmacarol578@gmail.com</a><br>
+                Mobi: <a href="tel:041459036">041 459 036</a>
+            </div>
+            <p style="margin-top: 25px; font-size: 9pt;">© 2026 Natisni in Primi - CEO Klemen Macarol. Vse pravice pridržane.</p>
+        </footer>
+    </div>
+
+</body>
+</html>
